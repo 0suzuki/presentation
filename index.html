@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万博のUXデザインに学ぶ、顧客を惹きつける仕組み</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --base-blue: #00529B;
+            --base-red: #E60012;
+            --light-blue: #a3c9e6;
+            --light-red: #f7a9b0;
+            --text-dark: #2c3e50;
+            --text-light: #ffffff;
+            --bg-light: #f8f9fa;
+            --border-color: #dee2e6;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .slide {
+            background: radial-gradient(circle at top left, #ffffff, #f7f9fc);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 90vw;
+            height: 90vh;
+            max-width: 1280px;
+            max-height: 720px;
+            transform: translate(-50%, -50%);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 50px 70px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out, visibility 0.5s;
+            overflow: hidden;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- 動くオブジェクト（ここから） --- */
+        @keyframes floatAndScale {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            25% {
+                transform: translate(60px, 80px) scale(1.2);
+            }
+
+            /* 動きを大きく速く */
+            50% {
+                transform: translate(-80px, -40px) scale(0.8);
+            }
+
+            /* 動きを大きく速く */
+            75% {
+                transform: translate(40px, -60px) scale(1.1);
+            }
+
+            /* 動きを大きく速く */
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+        }
+
+        .anim-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        .anim-background span {
+            position: absolute;
+            border-radius: 50%;
+            display: block;
+            filter: blur(30px);
+            opacity: 0.6;
+            animation: floatAndScale 18s infinite ease-in-out;
+            /* 速度を速く (25s -> 18s) */
+        }
+
+        /* オブジェクトのサイズと配置、アニメーションのディレイを調整 */
+        .anim-background span:nth-child(1) {
+            width: 350px;
+            height: 350px;
+            /* サイズを少し大きく */
+            background-color: var(--light-blue);
+            top: -15%;
+            left: -15%;
+            animation-duration: 20s;
+            /* 速度を速く */
+        }
+
+        .anim-background span:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            /* サイズを少し大きく */
+            background-color: var(--light-red);
+            bottom: -20%;
+            right: -20%;
+            animation-duration: 22s;
+            /* 速度を速く */
+            animation-delay: -5s;
+        }
+
+        .anim-background span:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            /* サイズを少し大きく */
+            background-color: var(--light-blue);
+            bottom: 30%;
+            left: 0%;
+            animation-duration: 15s;
+            /* 速度を速く */
+            animation-delay: -10s;
+        }
+
+        .anim-background span:nth-child(4) {
+            width: 300px;
+            height: 300px;
+            /* サイズを少し大きく */
+            background-color: var(--light-red);
+            top: 5%;
+            right: 0%;
+            animation-duration: 19s;
+            /* 速度を速く */
+            animation-delay: -3s;
+        }
+
+        .anim-background span:nth-child(5) {
+            width: 200px;
+            height: 200px;
+            /* サイズを少し大きく */
+            background-color: var(--light-blue);
+            top: 55%;
+            left: 35%;
+            animation-duration: 16s;
+            /* 速度を速く */
+            animation-delay: -7s;
+        }
+
+        /* --- 動くオブジェクト（ここまで） --- */
+
+        .slide-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: 900;
+            color: var(--text-light);
+            line-height: 1.4;
+            margin: 0;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            font-size: 2.5em;
+            font-weight: 900;
+            margin-top: 0;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            color: var(--base-blue);
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100px;
+            height: 5px;
+            background: linear-gradient(90deg, var(--base-blue), var(--base-red));
+            border-radius: 3px;
+        }
+
+        p,
+        li {
+            font-size: 1.5em;
+            line-height: 1.9;
+        }
+
+        ul,
+        ol {
+            padding-left: 40px;
+        }
+
+        strong {
+            font-weight: 700;
+            background: linear-gradient(transparent 60%, #ffdde1 60%);
+        }
+
+        em {
+            font-style: normal;
+            color: var(--base-red);
+            font-weight: 700;
+        }
+
+        .slide-title {
+            background: linear-gradient(135deg, var(--base-blue), var(--base-red));
+            text-align: center;
+        }
+
+        .slide-title p {
+            font-size: 1.5em;
+            margin-top: 25px;
+            opacity: 0.9;
+            color: var(--text-light);
+        }
+
+        .flex-container {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .flex-item {
+            flex: 1;
+        }
+
+        .image-placeholder {
+            border: 3px dashed var(--border-color);
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b0b0b0;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            min-height: 300px;
+            border-radius: 15px;
+        }
+
+        .key-point {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border: 2px solid white;
+            padding: 20px 30px;
+            margin-top: 20px;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .key-point p {
+            font-size: 1.3em;
+            margin: 0;
+        }
+
+        .centered-text {
+            text-align: center;
+        }
+
+        .centered-text h2,
+        .final-slide h2 {
+            font-size: 3.5em;
+            border: none;
+            background: linear-gradient(90deg, var(--base-blue), var(--base-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .centered-text h2::after,
+        .final-slide h2::after {
+            display: none;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 25px;
+            right: 40px;
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #ccc;
+            z-index: 2;
+        }
+
+        .instruction {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            z-index: 100;
+            animation: fadeInOut 5s ease-in-out forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="slide-container">
+        <div class="slide slide-title active">
+            <div class="slide-content">
+                <h1>1日20万人が体験する『万博』のUXデザインに学ぶ、<br>顧客を惹きつける仕組み</h1>
+                <p>デジタル基盤技術部　鈴木竜哉</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="anim-background"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="slide-content">
+                <h2>導入：共通の課題</h2>
+                <div class="flex-container">
+                    <div class="flex-item">
+                        <p>私たちのサービスと大阪万博。<br>一見、無関係に見えますが…</p>
+                        <p>実は<strong>「ある共通の課題」</strong>に取り組んでいます。</p>
+                        <p>それは何だと思いますか？</p>
+                    </div>
+                    <div class="flex-item">
+                        <div class="image-placeholder">（画像）<br>万博のCGパースと<br>スマホアプリの画面</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="anim-background"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="slide-content centered-text">
+                <p style="font-size: 2em;">その答えは…</p>
+                <h2>「ユーザー体験（UX）の設計」</h2>
+                <p>万博は1日最大20万人が訪れる<br><em>「超巨大なUXの実験場」</em>なのです。</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="anim-background"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="slide-content">
+                <h2>「体験」が悪いと、どうなる？</h2>
+                <div class="flex-container">
+                    <div class="flex-item">
+                        <h4>もし、万博のUXが最悪だったら…？</h4>
+                        <ul>
+                            <li>道に迷う</li>
+                            <li>何時間も待たされる</li>
+                            <li>言語が通じない</li>
+                            <li>支払いが面倒</li>
+                        </ul>
+                    </div>
+                    <div class="flex-item">
+                        <h4>これはWebサービスと同じです</h4>
+                        <ul>
+                            <li>使いにくい</li>
+                            <li>重い、遅い</li>
+                            <li>分かりにくい</li>
+                            <li><em>即・離脱</em></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="anim-background"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="slide-content">
+                <h2 class="centered-text">本日お伝えする3つのヒント</h2>
+                <p style="text-align: center;">超巨大なUX課題に、万博はどう立ち向かっているのか？<br>明日から開発に活かせる3つのヒントを共有します。</p>
+                <ol style="margin: 30px auto; width: fit-content;">
+                    <li>
+                        <p><strong>「待つ」ストレスの転換</strong></p>
+                    </li>
+                    <li>
+                        <p><strong>OMO（Online Merges with Offline）体験設計</strong></p>
+                    </li>
+                    <li>
+                        <p><strong>インクルーシブデザイン</strong></p>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="anim-background"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="slide-content">
+                <h2>ヒント1：「待つ」をデザインする <small>-課題-</small></h2>
+                <div class="flex-container">
+                    <div class="flex-item">
+                        <p>最大のUXキラー、それは<br><em>「待ち時間」</em>です。</p>
+                        <p>過去の万博では、5〜6時間待ちも当たり前。「ひたすら待つ」という苦痛な体験でした。</p>
+                    </div>
+                    <div class="flex-item">
+                        <div class="image-placeholder">（画像）<br>長蛇の列の写真に<br>大きく「×」印</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="anim-background"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="slide-content">
+                <h2>ヒント1：「待つ」をデザインする <small>-解決策-</small></h2>
+                <p>鍵は<em>「予測可能性」</em>と<em>「選択可能性」</em>の提供です。</p>
+                <div class="flex-container">
+                    <div class="flex-item">
+                        <h4>予測可能性の担保</h4>
+                        <p>アプリで「事前予約」「当日整理券」を発行。いつ入れるか分かる安心感。</p>
+                    </div>
+                    <div class="flex-item">
+                        <h4>選択可能性の提供</h4>
+                        <p>待ち時間をリアルタイム表示。ユーザーが自ら行動を選択できる。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="anim-background"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="slide-content">
+                <h2>ヒント1：「待つ」をデザインする <small>-応用-</small></h2>
+                <div class="key-point">
+                    <p><strong>Key Point:</strong> 「待ち時間をゼロにする」のではなく、<br><em>「受動的なストレス」</em>を<em>「能動的な体験」</em>に転換する。</p>
+                </div>
+                <h4>私たちのサービスでは？</h4>
+                <div class="flex-container">
+                    <div class="flex-item" style="background: #fff5f5; padding: 20px; border-radius: 10px;">
+                        <h4 style="color: #c0392b">NG 👎</h4>
+                        <p>「Now Loading...」</p>
+                    </div>
+                    <div class="flex-item" style="background: #f0fff5; padding: 20px; border-radius: 10px;">
+                        <h4 style="color: #27ae60">OK 👍</h4>
+                        <p>「処理に約3分かかります」<br>「完了後メールで通知します」</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="anim-background"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="slide-content">
+                <h2>ヒント2：OMO体験設計 <small>-全体像-</small></h2>
+                <div class="flex-container">
+                    <div class="flex-item">
+                        <p>Online Merges with Offline<br><strong>オンラインとオフラインの融合</strong></p>
+                        <p>万博体験は「会場に行く」だけでは完結しません。<em>行く前 → 会場 → 帰った後</em> まで、デジタルがリアルな体験を支えます。</p>
+                    </div>
+                    <div class="flex-item">
+                        <div class="image-placeholder">（画像）<br>現実の会場とスマホアプリが<br>繋がっている概念図</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="anim-background"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="slide-content">
+                <h2>ヒント2：OMO体験設計 <small>-考察-</small></h2>
+                <div class="key-point">
+                    <p><strong>Key Point:</strong> デジタルはあくまでリアル体験を最大化するための<em>「黒子」</em>。</p>
+                </div>
+                <p>予約・移動・決済といった面倒な手続きをデジタルが引き受けることで、ユーザーは目の前の体験そのものに集中できます。</p>
+                <h4 style="text-align:center; margin-top: 40px;">問いかけ：私たちのサービスは、<br>顧客の「リアルな業務」まで想像できているか？</h4>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="anim-background"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="slide-content">
+                <h2>ヒント3：インクルーシブデザイン <small>-多様性-</small></h2>
+                <div class="flex-container">
+                    <div class="flex-item">
+                        <p>世界160カ国以上から、老若男女、障害の有無も様々な人々が来場。</p>
+                        <p>求められるのは、<em>「誰一人取り残さない」</em>という設計思想です。</p>
+                    </div>
+                    <div class="flex-item">
+                        <div class="image-placeholder">（画像）<br>多言語、アバター接客、<br>車椅子ピクトグラムなど</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="anim-background"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="slide-content">
+                <h2>ヒント3：インクルーシブデザイン <small>-応用-</small></h2>
+                <h4>多様な壁を取り除く工夫</h4>
+                <ul>
+                    <li><strong>言語の壁：</strong>リアルタイム翻訳機、多言語アバター</li>
+                    <li><strong>決済の壁：</strong>デジタルデバイド対策 (現金チャージ機)</li>
+                </ul>
+                <div class="key-point">
+                    <p><strong>応用:</strong> 私たちのサービスは、ITリテラシーやハンディキャップの有無に関わらず「誰でも使える」か？<br>→
+                        <em>「誰でも使える」は「誰にとっても使いやすい」</em></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="anim-background"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="slide-content">
+                <h2>まとめ：持ち帰るべき3つの視点</h2>
+                <ol>
+                    <li><strong>ストレスの転換：</strong>「待つ」→<em>「選ぶ」</em>へ（予測と選択）</li>
+                    <li><strong>体験の拡張：</strong>オンラインとオフラインを<em>「つなぐ」</em>（リアルを支える黒子）</li>
+                    <li><strong>対象の拡大：：</strong>多様性を<em>「受け入れる」</em>（インクルーシブ）</li>
+                </ol>
+                <div class="key-point">
+                    <p style="text-align: center;">共通するのは、<strong>ユーザーの「負」の感情に共感し、技術で解決する</strong>こと。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide final-slide">
+            <div class="anim-background"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="slide-content centered-text">
+                <h2>ご清聴ありがとうございました</h2>
+                <p>コードを書く前に、その先にいる「ユーザーの顔」をより深く想像し、<br>チームでのUXに関する議論を、もっと活発にしていきましょう。</p>
+            </div>
+        </div>
+
+        <div id="slide-number-display" class="slide-number"></div>
+    </div>
+
+    <div class="instruction">PCの矢印キー（ ← → ）でスライドを操作できます</div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const slideNumberDisplay = document.getElementById('slide-number-display');
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) {
+                    slide.classList.add('active');
+                }
+            });
+            updateSlideNumber();
+        }
+
+        function updateSlideNumber() {
+            if (currentSlide > 0 && currentSlide < slides.length - 1) {
+                slideNumberDisplay.textContent = `${currentSlide} / ${slides.length - 2}`;
+                slideNumberDisplay.style.display = 'block';
+            } else {
+                slideNumberDisplay.style.display = 'none';
+            }
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                prevSlide();
+            }
+        });
+
+        showSlide(currentSlide);
+    </script>
+
+</body>
+
+</html>
